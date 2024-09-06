@@ -7,11 +7,38 @@
 #include "Adafruit_BME680.h"
 #include "AS5600.h"
 
+
+
+/* General Configuration Parameters */
+#define SENSORS_ENABLE_DEBUG_PRINT 1
+
+/* I2C Wire 0 Configuration Parameters */
+#define I2C_WIRE0_SDA_PIN 21
+#define I2C_WIRE0_SCL_PIN 22
+
+/* I2C Wire 1 Configuration Parameters */
+#define I2C_WIRE1_SDA_PIN 99
+#define I2C_WIRE1_SCL_PIN 99
+
+/* BME680 - Temperature Sensor -Configuration Parameters */
+#define SEALEVELPRESSURE_HPA (1013.25)
+
+/* AS5600 - Wind Speed - Configuration Parameters */
+
+/* AS5600 - Wind Direction - Configuration Parameters */
+
+/* A3144 - Hall Sensor - Configuration Parameters*/
+#define PIN_INPUT_HALL_SENSOR 26
+
+
+/* Definition of global Variables */
 TwoWire I2C_Wire0 = TwoWire(0);
 TwoWire I2C_Wire1 = TwoWire(1);
 
 Adafruit_BME680 bme(&I2C_Wire0);                 // I2C Wire 0
 AS5600 as5600_wind_direction(&I2C_Wire0);        // I2C Wire 0
+
+sensor_results_struct sensor_results;
 
 
 void setup_i2c()
@@ -51,45 +78,60 @@ void setup_hallsensor() {
 
 void read_bme680()
 {
-    // Tell BME680 to begin measurement.
+  // Tell BME680 to begin measurement.
   unsigned long endTime = bme.beginReading();
   if (endTime == 0) {
-    Serial.println(F("Failed to begin reading :("));
+    #if SENSORS_ENABLE_DEBUG_PRINT > 0
+      Serial.println(F("Failed to begin reading :("));
+    #endif
     return;
   }
 
+  // Wait until reading has finished
   if (!bme.endReading()) {
-    Serial.println(F("Failed to complete reading :("));
+    #if SENSORS_ENABLE_DEBUG_PRINT > 0
+      Serial.println(F("Failed to complete reading :("));
+    #endif
     return;
   }
-  Serial.print(F("Reading completed at "));
-  Serial.println(millis());
+  
+  // Write Data to result struct
+  sensor_results.bme680_temperature_degc = bme.temperature;
+  sensor_results.bme680_pressure_hpa = bme.pressure / 100;
+  sensor_results.bme680_humidity_rel = bme.humidity;
+  sensor_results.bme680_gas_resistance_kohms = bme.gas_resistance / 1000.0;
+  sensor_results.bme680_altitude_m = bme.readAltitude(SEALEVELPRESSURE_HPA);
 
-  Serial.print(F("Temperature = "));
-  Serial.print(bme.temperature);
-  Serial.println(F(" *C"));
-
-  Serial.print(F("Pressure = "));
-  Serial.print(bme.pressure / 100.0);
-  Serial.println(F(" hPa"));
-
-  Serial.print(F("Humidity = "));
-  Serial.print(bme.humidity);
-  Serial.println(F(" %"));
-
-  Serial.print(F("Gas = "));
-  Serial.print(bme.gas_resistance / 1000.0);
-  Serial.println(F(" KOhms"));
-
-  Serial.print(F("Approx. Altitude = "));
-  Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
-  Serial.println(F(" m"));
-
-  Serial.println();
+  #if SENSORS_ENABLE_DEBUG_PRINT > 0
+    Serial.print(F("BME680 Reading completed at "));
+    Serial.println(millis());
+    Serial.print(F("Temperature = "));
+    Serial.print(sensor_results.bme680_temperature_degc);
+    Serial.println(F(" *C"));
+    Serial.print(F("Pressure = "));
+    Serial.print(sensor_results.bme680_pressure_hpa);
+    Serial.println(F(" hPa"));
+    Serial.print(F("Humidity = "));
+    Serial.print(sensor_results.bme680_humidity_rel);
+    Serial.println(F(" %"));
+    Serial.print(F("Gas = "));
+    Serial.print(sensor_results.bme680_gas_resistance_kohms);
+    Serial.println(F(" KOhms"));
+    Serial.print(F("Approx. Altitude = "));
+    Serial.print(sensor_results.bme680_altitude_m);
+    Serial.println(F(" m"));
+    Serial.println();
+  #endif
 }
 
 void read_as5600_wind_direction(){
-  as5600_wind_direction.getCumulativePosition();
-  //  update every 100 ms
-  Serial.println(as5600_wind_direction.getCumulativePosition());
+  // Read sensor value and write to result struct
+  sensor_results.as5600_winddirection_deg = as5600_wind_direction.getCumulativePosition();
+  
+  #if SENSORS_ENABLE_DEBUG_PRINT > 0
+    Serial.print(F("AS5600 Winddirection = "));
+    Serial.println(sensor_results.as5600_winddirection_deg);
+    Serial.println(F(" deg"));
+    Serial.println();
+  #endif
 }
