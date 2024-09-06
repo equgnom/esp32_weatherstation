@@ -23,7 +23,6 @@ void setup_i2c()
 void setup_bme680()
 {
   while (!Serial);
-  Serial.println(F("BME680 async test"));
 
   if (!bme.begin()) {
     Serial.println(F("Could not find a valid BME680 sensor, check wiring!"));
@@ -39,14 +38,9 @@ void setup_bme680()
 }
 
 void setup_as5600_wind_direction(){
-  Serial.println(__FILE__);
-  Serial.print("AS5600_LIB_VERSION: ");
-  Serial.println(AS5600_LIB_VERSION);
-
   as5600_wind_direction.begin();
-
   as5600_wind_direction.setDirection(AS5600_CLOCK_WISE);  //  default, just be explicit.
-  delay(1000);
+  delay(500);
   as5600_wind_direction.resetCumulativePosition(777);
 }
 
@@ -63,18 +57,7 @@ void read_bme680()
     Serial.println(F("Failed to begin reading :("));
     return;
   }
-  Serial.print(F("Reading started at "));
-  Serial.print(millis());
-  Serial.print(F(" and will finish at "));
-  Serial.println(endTime);
 
-  Serial.println(F("You can do other work during BME680 measurement."));
-  // There's no need to delay() until millis() >= endTime: bme.endReading()
-  // takes care of that. It's okay for parallel work to take longer than
-  // BME680's measurement time.
-
-  // Obtain measurement results from BME680. Note that this operation isn't
-  // instantaneous even if milli() >= endTime due to I2C/SPI latency.
   if (!bme.endReading()) {
     Serial.println(F("Failed to complete reading :("));
     return;

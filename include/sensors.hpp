@@ -8,6 +8,9 @@ void setup_hallsensor();
 void read_bme680();
 void read_as5600_wind_direction();
 
+/* Global Variables */
+struct sensor_results;
+
 /* General Configuration Parameters */
 #define SENSORS_ENABLE_DEBUG_PRINT 1
 
