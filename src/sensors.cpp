@@ -130,7 +130,7 @@ void read_as5600_wind_direction(){
   
   #if SENSORS_ENABLE_DEBUG_PRINT > 0
     Serial.print(F("AS5600 Winddirection = "));
-    Serial.println(sensor_results.as5600_winddirection_deg);
+    Serial.print(sensor_results.as5600_winddirection_deg);
     Serial.println(F(" deg"));
     Serial.println();
   #endif

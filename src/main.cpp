@@ -3,6 +3,12 @@
 #include "connectivity.hpp"
 
 
+#define uS_TO_S_FACTOR 1000000  /* Conversion factor for micro seconds to seconds */
+#define TIME_TO_SLEEP  60        /* Time ESP32 will go to sleep (in seconds) */
+
+
+
+
 void setup() {
   Serial.begin(9600);
   setup_wifi();
@@ -15,8 +21,9 @@ void setup() {
 
 
 void loop() {
-  // put your main code here, to run repeatedly:
-  // Check for over the air update request and (if present) flash it
+  
+  esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
+
   //ArduinoOTA.handle();
   //delay(25);
   read_bme680();
@@ -25,7 +32,10 @@ void loop() {
 
   //int digitalVal = digitalRead(pin_hallsensor);
   //Serial.println(digitalVal);
-  delay(1000);
+  delay(5000);
+
+  //Serial.flush(); 
+  //esp_deep_sleep_start();
 
 }
 
