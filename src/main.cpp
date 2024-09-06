@@ -21,11 +21,11 @@ void loop() {
   //delay(25);
   read_bme680();
   read_as5600_wind_direction();
-
+  //transmit_mqtt();
 
   //int digitalVal = digitalRead(pin_hallsensor);
   //Serial.println(digitalVal);
-  delay(100);
+  delay(1000);
 
 }
 

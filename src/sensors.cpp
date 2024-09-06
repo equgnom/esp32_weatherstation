@@ -38,7 +38,7 @@ TwoWire I2C_Wire1 = TwoWire(1);
 Adafruit_BME680 bme(&I2C_Wire0);                 // I2C Wire 0
 AS5600 as5600_wind_direction(&I2C_Wire0);        // I2C Wire 0
 
-sensor_results_struct sensor_results;
+sensor_results_struct sensor_results{ -1, -1, -1, -1, -1, -1, -1, -1};
 
 
 void setup_i2c()
