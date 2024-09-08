@@ -22,3 +22,4 @@ struct sensor_results_struct{
 
 /* Global Variables */
 extern sensor_results_struct sensor_results;
+extern int hall_curr_edge_count;

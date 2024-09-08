@@ -40,6 +40,14 @@ AS5600 as5600_wind_direction(&I2C_Wire0);        // I2C Wire 0
 
 sensor_results_struct sensor_results{ -1, -1, -1, -1, -1, -1, -1, -1};
 
+/* Definition of RTC Variables (stay during deep sleep) */
+RTC_DATA_ATTR int hall_curr_edge_count = 0;
+RTC_DATA_ATTR int hall_last_edge_count = 0;
+RTC_DATA_ATTR long timestamp_last_read = 0;
+
+//ULP Tutorial https://github.com/espressif/esp-idf/tree/master/examples/system/ulp/ulp_riscv/gpio
+//https://github.com/espressif/esp-idf/blob/e6afe28bafe5db5ab79fae213f2e8e1ccd9f937c/examples/system/ulp/main/ulp_example_main.c
+//https://github.com/hggh/esp32-ulp-example/blob/master/src/main.c
 
 void setup_i2c()
 {
